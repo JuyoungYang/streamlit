@@ -155,13 +155,6 @@ st.subheader("오백냥을 내면 뭐든지 알려주겠당!😼🐾")
 # 사용자의 질문 입력
 question = st.text_input("묻고 싶은게 뭐냥😸")
 
-# 입력이 없을 경우 메시지 출력하고 다시 입력 받기
-if not question:
-    st.write("아직 아무것도 묻지 않았다냥... 궁금한 걸 물어보라냥! 🐾")
-else:
-    st.write(f"너의 질문: {question} 😺")
-
-
 if question:
     # 타로카드 뽑기
     cards = draw_tarot()
