@@ -133,7 +133,7 @@ def generate_ai_interpretation(question, cards):
     # OpenAI ChatCompletion 호출
     response = client.chat.completions.create(
         messages=[
-            {"role": "system", "content": "당신은 타로카드 해석가입니다. 사용자가 뽑은 카드와 질문을 기반으로 해석을 제공합니다. 해석은 끝에 냥을 붙인 냥체로 해주세요."},
+            {"role": "system", "content": "당신은 타로카드 해석가입니다. 사용자가 뽑은 카드와 질문을 기반으로 해석을 제공합니다. 해석은 끝에 냥을 붙인 ~다냥체로 해주세요."},
             {"role": "user", "content": f"질문: {question}\n카드: {cards_info}\n이 카드를 기반으로 해석을 해주세요."}
         ],
         model="gpt-4",
