@@ -162,7 +162,7 @@ if question:
     st.divider()
     
     # 뽑은 카드 정보 출력
-    st.header("오호라 세가지 카드가 뽑혔다냥!😸")
+    st.header("오호라🐱 세가지 카드가 뽑혔다냥!😸")
     for card in cards:
         st.write(f"**{card['name']}** ({card['direction']}): {card['interpretation']}")
 
