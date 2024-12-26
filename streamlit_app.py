@@ -1,7 +1,7 @@
 import streamlit as st
 import random
 from openai import OpenAI  # OpenAI 모듈 추가
-
+import time
 
 # OpenAI API 키 설정
 client = OpenAI(
@@ -130,30 +130,44 @@ def generate_ai_interpretation(question, cards):
     # 카드 정보를 문자열로 정리
     cards_info = "\n".join([f"- {card['name']} ({card['direction']}): {card['interpretation']}" for card in cards])
 
-    # OpenAI ChatCompletion 호출
-    response = client.chat.completions.create(
-        messages=[
-            {"role": "system", "content": "당신은 타로카드 해석가입니다. 사용자가 뽑은 카드와 질문을 기반으로 해석을 제공합니다. 모든 문장은 ~다로 끝나고, 그 뒤에 '냥'을 붙여 말해줘. 문단 마지막에 고양이 이모지(예: 🐱, 😺, 😼, 😻)를 자연스럽게 넣어줘. 마지막에는 '내 해석이 어떠냥😼'으로 끝내줘."},
-            {"role": "user", "content": f"질문: {question}\n카드: {cards_info}\n이 카드를 기반으로 해석을 해주세요."}
-        ],
-        model="gpt-4",
-    )
+    # 데이터 로딩
+    with st.spinner("해석중이당😾 기다려라냥! 🐾"):
+        
+        # OpenAI ChatCompletion 호출
+        response = client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": "당신은 타로카드 해석가입니다. 사용자가 뽑은 카드와 질문을 기반으로 해석을 제공합니다. 모든 문장은 ~다로 끝나고, 그 뒤에 '냥'을 붙여 말해줘. 문단 마지막에 고양이 이모지(예: 🐱, 😺, 😼, 😻)를 자연스럽게 넣어줘. 마지막에는 '내 해석이 어떠냥😼'으로 끝내줘."},
+                {"role": "user", "content": f"질문: {question}\n카드: {cards_info}\n이 카드를 기반으로 해석을 해주세요."}
+            ],
+            model="gpt-4",
+        )
 
-    # 응답 결과 가져오기
-    ai_interpretation = (response.choices[0].message.content.strip())
-    return ai_interpretation
+        # 응답 결과 가져오기
+        ai_interpretation = (response.choices[0].message.content.strip())
+        return ai_interpretation
 
 # Streamlit UI
 st.title("🔮 냥타로")
-st.header("오백냥을 내면 뭐든지 알려주겠당!😼🐾")
+
+# 서브헤더로 안내 문구 표시
+st.subheader("오백냥을 내면 뭐든지 알려주겠당!😼🐾")
 
 # 사용자의 질문 입력
-question = st.text_input("묻고 싶은 질문을 입력해랑😸")
+question = st.text_input("묻고 싶은게 뭐냥😸")
+
+# 입력이 없을 경우 메시지 출력하고 다시 입력 받기
+if not question:
+    st.write("아직 아무것도 묻지 않았다냥... 궁금한 걸 물어보라냥! 🐾")
+else:
+    st.write(f"너의 질문: {question} 😺")
+
 
 if question:
     # 타로카드 뽑기
     cards = draw_tarot()
-
+    
+    st.divider()
+    
     # 뽑은 카드 정보 출력
     st.header("니가 뽑은 타로카드 이렇게 세개당!😸")
     for card in cards:
@@ -165,5 +179,5 @@ if question:
     ai_interpretation = generate_ai_interpretation(question, cards)
 
     # 응답 결과 가져오기
-    st.header("의미를 알려주겠땅! 보자보쟈~ 어디보쟝~")
+    st.header("의미를 알려주겠땅!")
     st.write(ai_interpretation)
