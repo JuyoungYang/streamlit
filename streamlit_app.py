@@ -133,7 +133,7 @@ def generate_ai_interpretation(question, cards):
     # OpenAI ChatCompletion 호출
     response = client.chat.completions.create(
         messages=[
-            {"role": "system", "content": "당신은 타로카드 해석가입니다. 사용자가 뽑은 카드와 질문을 기반으로 해석을 제공합니다. 해석은 끝에 냥을 붙인 ~다냥체로 해주세요."},
+            {"role": "system", "content": "당신은 타로카드 해석가입니다. 사용자가 뽑은 카드와 질문을 기반으로 해석을 제공합니다. 해석은 끝에 냥을 붙인 ~다냥체로 해주세요. 제일 마지막에는 내 해석이 어떠냥😼 메세지 붙여줘"},
             {"role": "user", "content": f"질문: {question}\n카드: {cards_info}\n이 카드를 기반으로 해석을 해주세요."}
         ],
         model="gpt-4",
@@ -148,14 +148,14 @@ st.title("🔮 냥타로")
 st.write("오백냥을 내면 뭐든지 알려주겠당!😼🐾")
 
 # 사용자의 질문 입력
-question = st.text_input("묻고 싶은 질문을 입력해랑")
+question = st.text_input("묻고 싶은 질문을 입력해랑😸")
 
 if question:
     # 타로카드 뽑기
     cards = draw_tarot()
 
     # 뽑은 카드 정보 출력
-    st.write("니가 뽑은 타로카드 이렇게 세개당!")
+    st.write("니가 뽑은 타로카드 이렇게 세개당!😸")
     for card in cards:
         st.write(f"**{card['name']}** ({card['direction']}): {card['interpretation']}")
 
