@@ -136,7 +136,7 @@ def generate_ai_interpretation(question, cards):
         # OpenAI ChatCompletion 호출
         response = client.chat.completions.create(
             messages=[
-                {"role": "system", "content": "당신은 타로카드 해석가입니다. 사용자가 뽑은 카드와 질문을 기반으로 해석을 제공합니다. 모든 문장은 ~다로 끝나고, 그 뒤에 '냥'을 붙여 말해줘. 문단 마지막에 고양이 이모지(예: 🐱, 😺, 😼, 😻)를 자연스럽게 넣어줘. 마지막에는 '내 해석이 어떠냥😼'으로 끝내줘."},
+                {"role": "system", "content": "당신은 타로카드 해석가입니다. 사용자가 뽑은 카드와 질문을 기반으로 해석을 제공합니다. 모든 문장은 '~다'로 끝나며, 그 뒤에 '냥'을 붙여서 말해줘. '있어냥'과 같은 표현은 사용하지 말고, 모든 문장은 '냥'으로 끝내야 한다냥. 문단 마지막에 고양이 이모지(예: 🐱, 😺, 😼, 😻)를 자연스럽게 넣어줘. 마지막에는 '내 해석이 어떠냥😼'으로 끝내줘."},
                 {"role": "user", "content": f"질문: {question}\n카드: {cards_info}\n이 카드를 기반으로 해석을 해주세요."}
             ],
             model="gpt-4",
