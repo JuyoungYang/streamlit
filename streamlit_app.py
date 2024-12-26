@@ -162,7 +162,7 @@ if question:
     st.divider()
     
     # 뽑은 카드 정보 출력
-    st.header("니가 뽑은 타로카드 이렇게 세개당!😸")
+    st.header("오호라 세가지 카드가 뽑혔다냥!😸")
     for card in cards:
         st.write(f"**{card['name']}** ({card['direction']}): {card['interpretation']}")
 
@@ -172,5 +172,5 @@ if question:
     ai_interpretation = generate_ai_interpretation(question, cards)
 
     # 응답 결과 가져오기
-    st.header("의미를 알려주겠땅!")
+    st.header("의미를 알려주게따냥!😺")
     st.write(ai_interpretation)
