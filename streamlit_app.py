@@ -150,7 +150,7 @@ def generate_ai_interpretation(question, cards):
 st.title("🔮 냥타로")
 
 # 서브헤더로 안내 문구 표시
-st.subheader("오백냥을 내면 뭐든지 알려주겠당!😼🐾")
+st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾")
 
 # 사용자의 질문 입력
 question = st.text_input("묻고 싶은게 뭐냥😸")
@@ -172,5 +172,5 @@ if question:
     ai_interpretation = generate_ai_interpretation(question, cards)
 
     # 응답 결과 가져오기
-    st.header("의미를 알려주게따냥!😺")
+    st.header("의미를 알려주겠다냥!😺")
     st.write(ai_interpretation)
