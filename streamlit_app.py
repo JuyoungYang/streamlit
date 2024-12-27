@@ -144,22 +144,16 @@ def get_random_card_info(card):
     return card_info
 
 def display_card_grid(available_cards):
-    # CSS로 그리드 레이아웃 구성
+    num_cards = len(available_cards)
+    
+    # CSS 스타일 정의
     st.markdown("""
         <style>
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
-            padding: 10px;
-        }
-        .card-cell {
-            width: 100px;
-            height: 140px;
-            position: relative;
-        }
-        .stButton {
-            z-index: 2;
+            margin: 10px;
         }
         .stButton > button {
             position: relative;
@@ -176,26 +170,17 @@ def display_card_grid(available_cards):
         </style>
     """, unsafe_allow_html=True)
     
-    # 컨테이너 시작
-    st.write('<div class="card-grid">', unsafe_allow_html=True)
-    
-    selected_card = None
+    # 카드 그리드를 한 번에 생성
     cols = st.columns(8)
+    selected_card = None
     
-    # 카드 그리드 생성
+    # 카드 배치
     for i, card in enumerate(available_cards):
         col_idx = i % 8
         with cols[col_idx]:
-            # HTML/CSS로 카드 셀 생성
-            st.write(f'<div class="card-cell">', unsafe_allow_html=True)
-            
-            # 클릭 가능한 버튼 추가
-            if st.button("", key=f"card_{i}"):
-                selected_card = card
-            
-            # SVG 카드 이미지 추가
+            # SVG 버튼 생성
             st.markdown(f"""
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" style="margin-top: -140px;">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
                     <rect width="100" height="140" rx="10" fill="#2a0845"/>
                     <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
                     <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
@@ -208,14 +193,15 @@ def display_card_grid(available_cards):
                 </svg>
             """, unsafe_allow_html=True)
             
-            st.write('</div>', unsafe_allow_html=True)
-            
-            # 한 줄이 끝나면 새로운 행 시작
-            if col_idx == 7:
-                cols = st.columns(8)
+            # 투명 버튼 생성
+            if st.button("", key=f"card_{i}", help=f"카드 {i + 1} 선택"):
+                selected_card = card
     
-    # 컨테이너 종료
-    st.write('</div>', unsafe_allow_html=True)
+    # 빈 열 채우기
+    remaining = 8 - (num_cards % 8) if num_cards % 8 != 0 else 0
+    for i in range(remaining):
+        with cols[-(i+1)]:
+            st.write("")
     
     return selected_card
 
