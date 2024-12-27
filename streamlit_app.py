@@ -148,44 +148,34 @@ def display_card_grid(available_cards):
     
     st.markdown("""
         <style>
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .card-content {
+        .stButton > button {
             width: 100px;
-            aspect-ratio: 5 / 7;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
+            height: 140px;
             padding: 0;
             background: transparent;
+            border: none;
         }
-        .card-content:hover {
-            cursor: pointer;
+        .stButton > button:hover {
             transform: scale(1.05);
+            transition: transform 0.2s;
         }
         </style>
     """, unsafe_allow_html=True)
     
+    # 카드 컨테이너 시작
+    cols = st.columns(cols_per_row)
+    
     selected_card = None
     
-    st.write('<div class="card-container">', unsafe_allow_html=True)
-    
     for i, card in enumerate(available_cards):
-        card_svg = CARD_BACK_SVG.format(i + 1)
-        button_html = f"""
-        <button class="card-content" onclick="document.getElementById('card_{i}').click()">
-            {card_svg}
-        </button>
-        """
-        st.markdown(button_html, unsafe_allow_html=True)
-        if st.button("", key=f"card_{i}"):
-            selected_card = card
-    
-    st.write('</div>', unsafe_allow_html=True)
+        col_idx = i % cols_per_row
+        with cols[col_idx]:
+            # 버튼 생성
+            if st.button("", key=f"card_{i}"):
+                selected_card = card
+            # SVG 표시
+            card_svg = CARD_BACK_SVG.format(i + 1)
+            st.markdown(card_svg, unsafe_allow_html=True)
     
     return selected_card
 
