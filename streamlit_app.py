@@ -7,7 +7,21 @@ client = OpenAI(
     api_key = st.secrets["openai"]["api_key"]
 )
 
-CARD_BACK_SVG = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" preserveAspectRatio="xMidYMid meet"><rect width="100" height="140" rx="10" fill="#2a0845"/><rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/><path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" fill="none" stroke="#9d4edd" stroke-width="2"/><circle cx="15" cy="15" r="5" fill="#9d4edd"/><circle cx="85" cy="15" r="5" fill="#9d4edd"/><circle cx="15" cy="125" r="5" fill="#9d4edd"/><circle cx="85" cy="125" r="5" fill="#9d4edd"/><text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle" dominant-baseline="middle">카드 {}</text></svg>'''
+CARD_BACK_SVG = '''
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" preserveAspectRatio="xMidYMid meet">
+    <rect width="100" height="140" rx="10" fill="#2a0845"/>
+    <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
+    <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
+          fill="none" stroke="#9d4edd" stroke-width="2"/>
+    <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
+    <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
+    <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
+    <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
+    <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle" dominant-baseline="middle">
+        카드 {index}
+    </text>
+</svg>
+'''
 
 # 메이저 아르카나 카드 정의
 major_arcana = {
@@ -143,35 +157,44 @@ def display_card_grid(available_cards):
     
     st.markdown("""
         <style>
-        .stButton > button {
-            background-color: transparent;
-            border: none;
-            padding: 0;
-            width: 100%;
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .card-content {
-            width: 100%;
-            aspect-ratio: 5/7;
-            max-width: 100px;
-            margin: auto;
+            width: 100px;
+            aspect-ratio: 5 / 7;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: none;
+            padding: 0;
+            background: transparent;
+        }
+        .card-content:hover {
+            cursor: pointer;
+            transform: scale(1.05);
         }
         </style>
     """, unsafe_allow_html=True)
     
     selected_card = None
     
-    for i in range(0, len(available_cards), cols_per_row):
-        cols = st.columns(cols_per_row)
-        for j, col in enumerate(cols):
-            if i + j < len(available_cards):
-                card = available_cards[i + j]
-                with col:
-                    button_content = f'<div class="card-content">{CARD_BACK_SVG.format(i + j + 1)}</div>'
-                    if st.button(button_content, key=f"card_{i}_{j}"):
-                        selected_card = card
+    st.write('<div class="card-container">', unsafe_allow_html=True)
+    
+    for i, card in enumerate(available_cards):
+        card_svg = CARD_BACK_SVG.format(index=i + 1)
+        button_html = f"""
+        <button class="card-content" onclick="document.getElementById('card_{i}').click()">
+            {card_svg}
+        </button>
+        """
+        st.markdown(button_html, unsafe_allow_html=True)
+        if st.button("", key=f"card_{i}"):
+            selected_card = card
+    
+    st.write('</div>', unsafe_allow_html=True)
     
     return selected_card
 
