@@ -156,7 +156,7 @@ def display_card_grid(available_cards):
             margin: 10px;
         }
         .stButton > button {
-            position: relative;
+             position: relative;
             width: 100px !important;
             height: 140px !important;
             padding: 0 !important;
@@ -179,23 +179,42 @@ def display_card_grid(available_cards):
         col_idx = i % 8
         with cols[col_idx]:
             # SVG 버튼 생성
-            st.markdown(f"""
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
-                    <rect width="100" height="140" rx="10" fill="#2a0845"/>
-                    <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
-                    <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
-                          fill="none" stroke="#9d4edd" stroke-width="2"/>
-                    <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
-                    <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
-                    <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
-                    <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
-                    <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {i + 1}</text>
-                </svg>
-            """, unsafe_allow_html=True)
-            
-            # 투명 버튼 생성
-            if st.button("", key=f"card_{i}", help=f"카드 {i + 1} 선택"):
+            if st.button(
+                "",
+                key=f"card_{i}",
+                help=f"카드 {i + 1} 선택",
+                
+            ):
                 selected_card = card
+            st.markdown(f"""
+                <style>
+                    [data-testid="stButton"] > button {{
+                        position: relative;
+                        width: 100px !important;
+                        height: 140px !important;
+                        padding: 0 !important;
+                        background: transparent !important;
+                        border: none !important;
+                    }}
+                    [data-testid="stButton"] > button:focus:not(:active) {{
+                        border-color: transparent !important;
+                    }}
+                    [data-testid="stButton"] > button:focus {{
+                        outline: none !important;
+                    }}
+                </style>
+                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" width="100" height="140">
+                     <rect width="100" height="140" rx="10" fill="#2a0845"/>
+                     <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
+                     <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
+                            fill="none" stroke="#9d4edd" stroke-width="2"/>
+                     <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
+                     <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
+                     <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
+                     <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
+                     <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {i + 1}</text>
+                   </svg>
+            """, unsafe_allow_html=True)
     
     # 빈 열 채우기
     remaining = 8 - (num_cards % 8) if num_cards % 8 != 0 else 0
@@ -220,7 +239,7 @@ def generate_ai_interpretation(question, cards):
 
 # Streamlit UI
 st.title("🔮 냥타로")
-st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾")
+st.subheader("오백냥을 내면 뭐든지 알려주겠다냥! 더줘도 된다냥!😼🐾")
 
 # 세션 스테이트 초기화
 if 'asked_questions' not in st.session_state:
@@ -248,8 +267,12 @@ if question:
         # 카드 선택 UI
         if len(st.session_state.selected_cards) < 3:
             st.write(f"### {len(st.session_state.selected_cards) + 1}번째 카드를 선택하라냥")
-            available_cards = [card for card in get_all_cards() 
-                            if card not in st.session_state.selected_cards]
+            
+            # 선택된 카드를 제외한 사용 가능한 카드 목록 생성
+            available_cards = [
+                card for card in get_all_cards()
+                if not any(c['name'] == card['name'] for c in st.session_state.selected_cards)
+            ]
             
             selected_card = display_card_grid(available_cards)
             if selected_card:
@@ -275,7 +298,7 @@ if question:
                 st.session_state.asked_questions.add(question)
             
                 # 리셋 버튼
-                if st.button("다시 보겠다냥!"):
+                if st.button("츄르값 주고 물어봐라냥😼!"):
                     st.session_state.selected_cards = []
                     st.session_state.current_question = ""
                     st.rerun()
