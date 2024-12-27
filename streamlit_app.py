@@ -143,7 +143,7 @@ def get_random_card_info(card):
     card_info['interpretation'] = card_info['forward'] if direction == 'forward' else card_info['reversed']
     return card_info
 
-def display_card_grid(available_cards):
+def display_card_grid(available_cards, selected_cards):
     num_cards = len(available_cards)
     
     # CSS 스타일 정의
@@ -155,15 +155,16 @@ def display_card_grid(available_cards):
             gap: 10px;
             margin: 10px;
         }
-        .stButton > button {
+        .card-button {
              position: relative;
             width: 100px !important;
             height: 140px !important;
             padding: 0 !important;
             background: transparent !important;
             border: none !important;
+            cursor: pointer;
         }
-        .stButton > button:hover {
+        .card-button:hover {
             transform: scale(1.05);
             transition: transform 0.2s ease;
         }
@@ -178,44 +179,55 @@ def display_card_grid(available_cards):
     for i, card in enumerate(available_cards):
         col_idx = i % 8
         with cols[col_idx]:
-            # SVG 버튼 생성
-            if st.button(
-                "",
-                key=f"card_{i}",
-                help=f"카드 {i + 1} 선택",
+            # 선택된 카드인지 확인
+            is_selected = any(c['name'] == card['name'] for c in selected_cards)
+            
+            # 카드 컨테이너 생성
+            with st.container():
+                # 회색조 스타일 적용 (선택된 카드인 경우)
+                filter_style = "filter: grayscale(100%);" if is_selected else ""
                 
-            ):
-                selected_card = card
-            st.markdown(f"""
-                <style>
-                    [data-testid="stButton"] > button {{
-                        position: relative;
-                        width: 100px !important;
-                        height: 140px !important;
-                        padding: 0 !important;
-                        background: transparent !important;
-                        border: none !important;
-                    }}
-                    [data-testid="stButton"] > button:focus:not(:active) {{
-                        border-color: transparent !important;
-                    }}
-                    [data-testid="stButton"] > button:focus {{
-                        outline: none !important;
-                    }}
-                </style>
-                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" width="100" height="140">
-                     <rect width="100" height="140" rx="10" fill="#2a0845"/>
-                     <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
-                     <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
-                            fill="none" stroke="#9d4edd" stroke-width="2"/>
-                     <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
-                     <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
-                     <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
-                     <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
-                     <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {i + 1}</text>
-                   </svg>
-            """, unsafe_allow_html=True)
-    
+                # 카드 클릭 영역 및 스타일 설정
+                st.markdown(f"""
+                    <button class="card-button" data-card-index="{i}" style="{filter_style}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" width="100" height="140">
+                        <rect width="100" height="140" rx="10" fill="#2a0845"/>
+                        <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
+                        <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
+                                fill="none" stroke="#9d4edd" stroke-width="2"/>
+                        <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
+                        <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
+                        <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
+                        <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
+                        <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {i + 1}</text>
+                    </svg>
+                    </button>
+                """, unsafe_allow_html=True)
+                
+                # JavaScript 클릭 이벤트 핸들러 추가
+                st.markdown(
+                    f"""
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {{
+                                const buttons = document.querySelectorAll('.card-button');
+                                buttons.forEach(button => {{
+                                    button.addEventListener('click', function() {{
+                                        const cardIndex = this.getAttribute('data-card-index');
+                                        
+                                        window.parent.postMessage({{
+                                            type: 'card_selected',
+                                            index: cardIndex
+                                        }}, '*');
+                                        
+                                    }});
+                                }
+                                );
+                            }});
+                        </script>
+                    """,
+                    unsafe_allow_html=True
+                )
+
     # 빈 열 채우기
     remaining = 8 - (num_cards % 8) if num_cards % 8 != 0 else 0
     for i in range(remaining):
@@ -239,7 +251,7 @@ def generate_ai_interpretation(question, cards):
 
 # Streamlit UI
 st.title("🔮 냥타로")
-st.subheader("오백냥을 내면 뭐든지 알려주겠다냥! 더줘도 된다냥!😼🐾")
+st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾")
 
 # 세션 스테이트 초기화
 if 'asked_questions' not in st.session_state:
@@ -248,15 +260,34 @@ if 'selected_cards' not in st.session_state:
     st.session_state.selected_cards = []
 if 'current_question' not in st.session_state:
     st.session_state.current_question = ""
+if 'card_clicked' not in st.session_state:
+    st.session_state.card_clicked = None
 
 # 사용자의 질문 입력
 question = st.text_input("묻고 싶은게 뭐냥😸")
+
+def handle_card_selection(index):
+    available_cards = [
+            card for card in get_all_cards()
+            if not any(c['name'] == card['name'] for c in st.session_state.selected_cards)
+        ]
+    selected_card = available_cards[int(index)]
+    if selected_card:
+        card_info = get_random_card_info(selected_card)
+        st.session_state.selected_cards.append(card_info)
+        st.session_state.card_clicked = None
+        st.rerun()
+        
+# JavaScript로부터 메시지를 받아 처리하는 코드
+if st.session_state.card_clicked is not None:
+    handle_card_selection(st.session_state.card_clicked)
 
 if question:
     # 질문이 바뀌었을 때 카드 초기화
     if question != st.session_state.current_question:
         st.session_state.selected_cards = []
         st.session_state.current_question = question
+        st.session_state.card_clicked = None
     
     # 질문 중복 체크
     if question in st.session_state.asked_questions:
@@ -274,11 +305,7 @@ if question:
                 if not any(c['name'] == card['name'] for c in st.session_state.selected_cards)
             ]
             
-            selected_card = display_card_grid(available_cards)
-            if selected_card:
-                card_info = get_random_card_info(selected_card)
-                st.session_state.selected_cards.append(card_info)
-                st.rerun()
+            display_card_grid(available_cards, st.session_state.selected_cards)
 
         # 카드가 선택되었다면 결과 표시
         if st.session_state.selected_cards:
@@ -301,4 +328,5 @@ if question:
                 if st.button("츄르값 주고 물어봐라냥😼!"):
                     st.session_state.selected_cards = []
                     st.session_state.current_question = ""
+                    st.session_state.card_clicked = None
                     st.rerun()
