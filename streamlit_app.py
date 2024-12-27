@@ -7,7 +7,7 @@ client = OpenAI(
     api_key = st.secrets["openai"]["api_key"]
 )
 
-CARD_BACK_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140"><rect width="100" height="140" rx="10" fill="#2a0845"/><rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/><path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65z" fill="none" stroke="#9d4edd" stroke-width="2"/><circle cx="15" cy="15" r="5" fill="#9d4edd"/><circle cx="85" cy="15" r="5" fill="#9d4edd"/><circle cx="15" cy="125" r="5" fill="#9d4edd"/><circle cx="85" cy="125" r="5" fill="#9d4edd"/><text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {}</text></svg>'
+CARD_BACK_SVG = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" preserveAspectRatio="xMidYMid meet"><rect width="100" height="140" rx="10" fill="#2a0845"/><rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/><path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" fill="none" stroke="#9d4edd" stroke-width="2"/><circle cx="15" cy="15" r="5" fill="#9d4edd"/><circle cx="85" cy="15" r="5" fill="#9d4edd"/><circle cx="15" cy="125" r="5" fill="#9d4edd"/><circle cx="85" cy="125" r="5" fill="#9d4edd"/><text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle" dominant-baseline="middle">카드 {}</text></svg>'''
 
 # 메이저 아르카나 카드 정의
 major_arcana = {
@@ -143,9 +143,21 @@ def display_card_grid(available_cards):
     
     st.markdown("""
         <style>
-        .stButton > button { background-color: transparent; border: none; width: 100%; padding: 0; }
-        .card-wrapper { width: 100%; }
-        .card-content { aspect-ratio: 5/7; width: 100%; max-width: 100px; margin: auto; }
+        .stButton > button {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            width: 100%;
+        }
+        .card-content {
+            width: 100%;
+            aspect-ratio: 5/7;
+            max-width: 100px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         </style>
     """, unsafe_allow_html=True)
     
@@ -157,12 +169,8 @@ def display_card_grid(available_cards):
             if i + j < len(available_cards):
                 card = available_cards[i + j]
                 with col:
-                    button_html = f'''
-                        <div class="card-wrapper">
-                            <div class="card-content">{CARD_BACK_SVG.format(i + j + 1)}</div>
-                        </div>
-                    '''
-                    if st.button(button_html, key=f"card_{i}_{j}"):
+                    button_content = f'<div class="card-content">{CARD_BACK_SVG.format(i + j + 1)}</div>'
+                    if st.button(button_content, key=f"card_{i}_{j}"):
                         selected_card = card
     
     return selected_card
