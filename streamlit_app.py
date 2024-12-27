@@ -182,14 +182,12 @@ def display_card_grid(available_cards, selected_cards):
             # 선택된 카드인지 확인
             is_selected = any(c['name'] == card['name'] for c in selected_cards)
             
-            # 카드 컨테이너 생성
-            with st.container():
-                # 회색조 스타일 적용 (선택된 카드인 경우)
-                filter_style = "filter: grayscale(100%);" if is_selected else ""
-                
-                # 카드 클릭 영역 및 스타일 설정
-                st.markdown(f"""
-                    <button class="card-button" data-card-index="{i}" style="{filter_style}">
+            # 회색조 스타일 적용 (선택된 카드인 경우)
+            filter_style = "filter: grayscale(100%);" if is_selected else ""
+            
+            # 카드 버튼 및 스타일 설정
+            st.markdown(f"""
+                <div class="card-button" onclick="selectCard({i})" style="{filter_style}">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" width="100" height="140">
                         <rect width="100" height="140" rx="10" fill="#2a0845"/>
                         <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
@@ -201,32 +199,8 @@ def display_card_grid(available_cards, selected_cards):
                         <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
                         <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {i + 1}</text>
                     </svg>
-                    </button>
-                """, unsafe_allow_html=True)
-                
-                # JavaScript 클릭 이벤트 핸들러 추가
-                st.markdown(
-                    f"""
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {{
-                                const buttons = document.querySelectorAll('.card-button');
-                                buttons.forEach(button => {{
-                                    button.addEventListener('click', function() {{
-                                        const cardIndex = this.getAttribute('data-card-index');
-                                        
-                                        window.parent.postMessage({{
-                                            type: 'card_selected',
-                                            index: cardIndex
-                                        }}, '*');
-                                        
-                                    }});
-                                }
-                                );
-                            }});
-                        </script>
-                    """,
-                    unsafe_allow_html=True
-                )
+                </div>
+            """, unsafe_allow_html=True)
 
     # 빈 열 채우기
     remaining = 8 - (num_cards % 8) if num_cards % 8 != 0 else 0
