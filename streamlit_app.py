@@ -145,65 +145,66 @@ def get_random_card_info(card):
 
 def display_card_grid(available_cards):
     num_cards = len(available_cards)
-    rows = (num_cards + 7) // 8  # 올림 나눗셈으로 필요한 행 수 계산
-    
-    selected_card = None
+    rows = (num_cards + 7) // 8
     
     # 스타일 정의
     st.markdown("""
         <style>
-        .card {
-            width: 100%;
-            margin: 5px;
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+            margin: 10px;
         }
-        .card button:hover {
-            transform: scale(1.05);
-            transition: transform 0.2s;
+        .card-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        .card-button {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 0;
             cursor: pointer;
+            transition: transform 0.2s;
         }
-        button {
-            width: 100%;
+        .card-button:hover {
+            transform: scale(1.05);
         }
         </style>
     """, unsafe_allow_html=True)
     
-    for row in range(rows):
-        cols = st.columns(8)
-        start_idx = row * 8
-        end_idx = min((row + 1) * 8, num_cards)
+    selected_card = None
+    
+    # 전체 카드 컨테이너 시작
+    st.markdown('<div class="card-container">', unsafe_allow_html=True)
+    
+    for i, card in enumerate(available_cards):
+        # 카드 버튼 생성
+        st.markdown(f"""
+            <div class="card-wrapper">
+                <button class="card-button" id="card_btn_{i}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
+                        <rect width="100" height="140" rx="10" fill="#2a0845"/>
+                        <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
+                        <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
+                              fill="none" stroke="#9d4edd" stroke-width="2"/>
+                        <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
+                        <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
+                        <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
+                        <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
+                        <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {i + 1}</text>
+                    </svg>
+                </button>
+            </div>
+        """, unsafe_allow_html=True)
         
-        for i in range(start_idx, end_idx):
-            col_idx = i % 8
-            current_card = available_cards[i]  # 현재 카드 가져오기
-            
-            with cols[col_idx]:
-                st.markdown(f"""
-                    <div class="card" style="text-align: center;">
-                        <button style="background: none; border: none; padding: 0;" 
-                                onclick="document.getElementById('card_{i}').click()">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
-                                <rect width="100" height="140" rx="10" fill="#2a0845"/>
-                                <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
-                                <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
-                                      fill="none" stroke="#9d4edd" stroke-width="2"/>
-                                <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
-                                <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
-                                <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
-                                <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
-                                <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {i + 1}</text>
-                            </svg>
-                        </button>
-                    </div>
-                """, unsafe_allow_html=True)
-                
-                # 숨겨진 버튼에 현재 카드 연결
-                if st.button("", key=f"card_{i}", help=f"카드 {i + 1} 선택"):
-                    selected_card = current_card
-        
-        # 남은 열 채우기
-        for col_idx in range((end_idx - start_idx), 8):
-            with cols[col_idx]:
-                st.write("")
+        # Streamlit 버튼을 숨겨서 클릭 이벤트 처리
+        if st.button("", key=f"card_{i}", key_visibility="hidden"):
+            selected_card = card
+    
+    # 컨테이너 닫기
+    st.markdown('</div>', unsafe_allow_html=True)
     
     return selected_card
 
