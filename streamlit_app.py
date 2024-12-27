@@ -9,9 +9,9 @@ client = OpenAI(
 )
 
 CARD_BACK_SVG = '''
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
-    <rect width="100" height="140" rx="10" fill="#2a0845"/>
-    <rect x="5" y="5" width="90" height="130" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 140" preserveAspectRatio="xMidYMid meet">
+    <rect width="100%" height="100%" rx="10" fill="#2a0845"/>
+    <rect x="5%" y="5%" width="90%" height="90%" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
     <path d="M 50 45 L 57 65 L 78 65 L 61 78 L 68 98 L 50 85 L 32 98 L 39 78 L 22 65 L 43 65 Z" 
           fill="none" stroke="#9d4edd" stroke-width="2"/>
     <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
@@ -156,39 +156,34 @@ def display_card_grid(available_cards):
     
     st.markdown("""
         <style>
-        div[data-testid="column"] > div:has(button) {
-            height: 100%;
-        }
         .stButton > button {
             background-color: transparent;
             border: none;
+            padding: 0;
             width: 100%;
-            padding: 2px;
-            margin: 2px;
+            aspect-ratio: 5/7;
+        }
+        
+        .card-content {
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        .stButton > button:hover {
-            transform: scale(1.05);
-            transition: transform 0.2s;
-            background-color: rgba(157, 78, 221, 0.1);
-        }
-        .card-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        
+        .card-content svg {
             width: 100%;
+            height: auto;
+            max-width: 100px;
         }
+        
         .card-number {
             color: #9d4edd;
             font-size: 0.8em;
-            margin-top: 2px;
-        }
-        svg {
-            max-width: 100%;
-            height: auto;
+            margin-top: 5px;
+            text-align: center;
         }
         </style>
     """, unsafe_allow_html=True)
