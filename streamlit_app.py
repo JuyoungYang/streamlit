@@ -144,38 +144,55 @@ def get_random_card_info(card):
     return card_info
 
 def display_card_grid(available_cards):
-    cols_per_row = 8
-    
-    st.markdown("""
-        <style>
-        .stButton > button {
-            width: 100px;
-            height: 140px;
-            padding: 0;
-            background: transparent;
-            border: none;
-        }
-        .stButton > button:hover {
-            transform: scale(1.05);
-            transition: transform 0.2s;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-    
-    # 카드 컨테이너 시작
-    cols = st.columns(cols_per_row)
+    # 카드 레이아웃을 위한 열 생성
+    cols = st.columns(8)  # 8개의 열로 구성
     
     selected_card = None
     
+    # 각 카드에 대한 스타일과 클릭 이벤트 처리
     for i, card in enumerate(available_cards):
-        col_idx = i % cols_per_row
-        with cols[col_idx]:
-            # 버튼 생성
-            if st.button("", key=f"card_{i}"):
+        with cols[i]:
+            # 버튼과 SVG를 포함하는 div 생성
+            st.markdown(f"""
+                <div class="card" style="text-align: center;">
+                    <button style="background: none; border: none; padding: 0;" 
+                            onclick="document.getElementById('card_{i}').click()">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
+                            <rect width="100" height="140" rx="10" fill="#2a0845"/>
+                            <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
+                            <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
+                                fill="none" stroke="#9d4edd" stroke-width="2"/>
+                            <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
+                            <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
+                            <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
+                            <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
+                            <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {i + 1}</text>
+                        </svg>
+                    </button>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # 실제 클릭 이벤트를 처리하는 숨겨진 버튼
+            if st.button("", key=f"card_{i}", help=f"카드 {i + 1} 선택"):
                 selected_card = card
-            # SVG 표시
-            card_svg = CARD_BACK_SVG.format(i + 1)
-            st.markdown(card_svg, unsafe_allow_html=True)
+    
+    # 스타일 추가
+    st.markdown("""
+        <style>
+        .card {
+            width: 100%;
+            margin: 5px;
+        }
+        .card button:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        button {
+            width: 100%;
+        }
+        </style>
+    """, unsafe_allow_html=True)
     
     return selected_card
 
