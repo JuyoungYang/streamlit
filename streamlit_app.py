@@ -8,13 +8,12 @@ client = OpenAI(
     api_key = st.secrets["openai"]["api_key"]
 )
 
-# 카드 뒷면 SVG 정의
 CARD_BACK_SVG = '''
-<svg width="50" height="70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
     <rect width="100" height="140" rx="10" fill="#2a0845"/>
     <rect x="5" y="5" width="90" height="130" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
     <path d="M 50 45 L 57 65 L 78 65 L 61 78 L 68 98 L 50 85 L 32 98 L 39 78 L 22 65 L 43 65 Z" 
-        fill="none" stroke="#9d4edd" stroke-width="2"/>
+          fill="none" stroke="#9d4edd" stroke-width="2"/>
     <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
     <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
     <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
