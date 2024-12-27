@@ -8,6 +8,20 @@ client = OpenAI(
     api_key = st.secrets["openai"]["api_key"]
 )
 
+# 카드 뒷면 SVG 정의
+CARD_BACK_SVG = '''
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
+    <rect width="100" height="140" rx="10" fill="#2a0845"/>
+    <rect x="5" y="5" width="90" height="130" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
+    <path d="M 50 45 L 57 65 L 78 65 L 61 78 L 68 98 L 50 85 L 32 98 L 39 78 L 22 65 L 43 65 Z" 
+        fill="none" stroke="#9d4edd" stroke-width="2"/>
+    <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
+    <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
+    <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
+    <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
+</svg>
+'''
+
 # 메이저 아르카나 카드 정의
 major_arcana = {
     0: {"name": "The Fool", "forward": "새로운 시작, 모험, 순수", "reversed": "어리석음, 경솔함, 위험"},
@@ -145,17 +159,46 @@ def draw_random_cards(num_cards=3):
 
 def display_card_grid(available_cards):
     """카드를 그리드 형태로 표시하는 함수"""
-    cols_per_row = 6  # 한 줄에 6개의 카드 표시
+    cols_per_row = 5  # 한 줄에 5개의 카드 표시 (SVG가 있으므로 줄임)
+    
+    # CSS로 버튼 스타일 지정
+    st.markdown("""
+        <style>
+        .card-button {
+            background-color: transparent;
+            border: none;
+            width: 100%;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .card-button:hover {
+            transform: scale(1.05);
+            transition: transform 0.2s;
+        }
+        .card-container {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
     
     for i in range(0, len(available_cards), cols_per_row):
         cols = st.columns(cols_per_row)
         for j, col in enumerate(cols):
             if i + j < len(available_cards):
                 card = available_cards[i + j]
-                # 메이저 아르카나는 카드 이름만, 마이너 아르카나는 suit와 rank 표시
-                display_name = card['name'] if card['type'] == 'Major Arcana' else f"{card['rank']} of {card['suit']}"
-                if col.button(display_name, key=f"card_{i}_{j}"):
-                    return card
+                with col:
+                    # SVG와 버튼을 포함한 컨테이너
+                    st.markdown(f"""
+                        <div class="card-container">
+                            {CARD_BACK_SVG}
+                            <div style="margin-top: 5px;">카드 {i + j + 1}</div>
+                        </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # 버튼 (SVG 아래에 배치)
+                    if st.button("선택", key=f"card_{i}_{j}"):
+                        return card
     return None
 
 # AI 해석 함수
@@ -206,7 +249,7 @@ if question:
             st.write(f"### {len(st.session_state.selected_cards) + 1}번째 카드를 선택하라냥")
             # 남은 카드 중에서 선택
             available_cards = [card for card in get_all_cards() 
-                             if card not in st.session_state.selected_cards]
+                            if card not in st.session_state.selected_cards]
             
             selected_card = display_card_grid(available_cards)
             if selected_card:
