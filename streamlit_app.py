@@ -259,7 +259,6 @@ if question:
 
         # 카드가 선택되었다면 결과 표시
         if st.session_state.selected_cards:
-            st.divider()
             st.header("오호라🐱")
             for idx, card in enumerate(st.session_state.selected_cards, 1):
                 direction_text = "정방향" if card['direction'] == 'forward' else "역방향"
