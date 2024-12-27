@@ -123,7 +123,7 @@ def get_all_cards():
     all_cards = []
     
     # 메이저 아르카나 카드 추가
-    for card_num, card_info in major_arcana.items():
+    for card_info in major_arcana.items():
         all_cards.append({
             "type": "Major Arcana",
             "name": card_info["name"],
@@ -155,7 +155,7 @@ def get_random_card_info(card):
 
 def display_card_grid(available_cards):
     """카드를 그리드 형태로 표시하는 함수"""
-    cols_per_row = 5
+    cols_per_row = 8  # 한 줄에 표시할 카드 수 증가
     
     st.markdown("""
         <style>
@@ -166,8 +166,7 @@ def display_card_grid(available_cards):
             background-color: transparent;
             border: none;
             width: 100%;
-            height: 100%;
-            padding: 5px;
+            padding: 2px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -177,14 +176,13 @@ def display_card_grid(available_cards):
             transform: scale(1.05);
             transition: transform 0.2s;
             background-color: rgba(157, 78, 221, 0.1);
-        }
-        .stButton > button > div {
-            width: 100%;
+            cursor: pointer;
         }
         .card-number {
-            margin-top: 5px;
+            margin-top: 2px;
             text-align: center;
             color: #9d4edd;
+            font-size: 0.8em;
         }
         .card-container {
             display: flex;
@@ -192,7 +190,7 @@ def display_card_grid(available_cards):
             align-items: center;
             justify-content: center;
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -205,12 +203,16 @@ def display_card_grid(available_cards):
             if i + j < len(available_cards):
                 card = available_cards[i + j]
                 with col:
-                    container = st.container()
-                    with container:
-                        st.markdown(CARD_BACK_SVG, unsafe_allow_html=True)
-                        st.markdown(f'<p style="text-align: center; color: #9d4edd;">카드 {i + j + 1}</p>', unsafe_allow_html=True)
-                        if st.button("선택", key=f"card_{i}_{j}", use_container_width=True):
-                            selected_card = card
+                    card_content = f"""
+                        {CARD_BACK_SVG}
+                        <div class="card-number">카드 {i + j + 1}</div>
+                    """
+                    if st.button(
+                        card_content,
+                        key=f"card_{i}_{j}",
+                        use_container_width=True,
+                    ):
+                        selected_card = card
     
     return selected_card
 
