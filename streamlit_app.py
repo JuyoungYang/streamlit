@@ -169,9 +169,9 @@ def display_card_grid(available_cards, selected_cards):
             transform: scale(1.05);
             transition: transform 0.2s ease;
         }
-        .selected-card {
+         .selected-card {{
             filter: grayscale(100%);
-        }
+         }}
         </style>
     """, unsafe_allow_html=True)
     
@@ -235,8 +235,8 @@ if 'selected_cards' not in st.session_state:
     st.session_state.selected_cards = []
 if 'current_question' not in st.session_state:
     st.session_state.current_question = ""
-if 'card_index' not in st.session_state:
-    st.session_state.card_index = None
+if 'card_clicked' not in st.session_state:
+    st.session_state.card_clicked = None
 
 # 사용자의 질문 입력
 question = st.text_input("묻고 싶은게 뭐냥😸")
@@ -246,7 +246,7 @@ st.markdown(
     """
     <script>
     function selectCard(index) {
-        window.parent.postMessage({type: 'card_selected', index: index}, '*');
+      window.streamlit.setSessionState({card_clicked: String(index)});
     }
     </script>
     """,
@@ -262,21 +262,19 @@ def handle_card_selection(index):
     if selected_card:
         card_info = get_random_card_info(selected_card)
         st.session_state.selected_cards.append(card_info)
-
-
-# JavaScript로부터 메시지를 받아 처리하는 코드
-def card_event_handler():
-    if st.session_state.card_index is not None:
-        handle_card_selection(st.session_state.card_index)
-        st.session_state.card_index = None
+        st.session_state.card_clicked = None
         st.rerun()
+        
+# JavaScript로부터 메시지를 받아 처리하는 코드
+if st.session_state.card_clicked is not None:
+    handle_card_selection(st.session_state.card_clicked)
 
 if question:
     # 질문이 바뀌었을 때 카드 초기화
     if question != st.session_state.current_question:
         st.session_state.selected_cards = []
         st.session_state.current_question = question
-        st.session_state.card_index = None
+        st.session_state.card_clicked = None
     
     # 질문 중복 체크
     if question in st.session_state.asked_questions:
@@ -295,9 +293,6 @@ if question:
             ]
             
             display_card_grid(available_cards, st.session_state.selected_cards)
-        
-        card_event_handler()
-
 
         # 카드가 선택되었다면 결과 표시
         if st.session_state.selected_cards:
@@ -320,5 +315,5 @@ if question:
                 if st.button("츄르값 주고 물어봐라냥😼!"):
                     st.session_state.selected_cards = []
                     st.session_state.current_question = ""
-                    st.session_state.card_index = None
+                    st.session_state.card_clicked = None
                     st.rerun()
