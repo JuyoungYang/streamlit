@@ -10,8 +10,7 @@ client = OpenAI(
 
 # 카드 뒷면 SVG 정의
 CARD_BACK_SVG = '''
-<div class="card-back">
-  <svg viewBox="0 0 100 140">
+<svg width="50" height="70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
     <rect width="100" height="140" rx="10" fill="#2a0845"/>
     <rect x="5" y="5" width="90" height="130" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
     <path d="M 50 45 L 57 65 L 78 65 L 61 78 L 68 98 L 50 85 L 32 98 L 39 78 L 22 65 L 43 65 Z" 
@@ -20,8 +19,7 @@ CARD_BACK_SVG = '''
     <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
     <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
     <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
-  </svg>
-</div>
+</svg>
 '''
 
 # 메이저 아르카나 카드 정의
@@ -155,7 +153,7 @@ def get_random_card_info(card):
 
 def display_card_grid(available_cards):
     """카드를 그리드 형태로 표시하는 함수"""
-    cols_per_row = 8  # 한 줄에 표시할 카드 수 증가
+    cols_per_row = 8
     
     st.markdown("""
         <style>
@@ -167,6 +165,7 @@ def display_card_grid(available_cards):
             border: none;
             width: 100%;
             padding: 2px;
+            margin: 2px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -176,21 +175,21 @@ def display_card_grid(available_cards):
             transform: scale(1.05);
             transition: transform 0.2s;
             background-color: rgba(157, 78, 221, 0.1);
-            cursor: pointer;
         }
-        .card-number {
-            margin-top: 2px;
-            text-align: center;
-            color: #9d4edd;
-            font-size: 0.8em;
-        }
-        .card-container {
+        .card-content {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             width: 100%;
-            margin-bottom: 5px;
+        }
+        .card-number {
+            color: #9d4edd;
+            font-size: 0.8em;
+            margin-top: 2px;
+        }
+        svg {
+            max-width: 100%;
+            height: auto;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -203,15 +202,14 @@ def display_card_grid(available_cards):
             if i + j < len(available_cards):
                 card = available_cards[i + j]
                 with col:
-                    card_content = f"""
-                        {CARD_BACK_SVG}
-                        <div class="card-number">카드 {i + j + 1}</div>
-                    """
-                    if st.button(
-                        card_content,
+                    if st.button(f"""
+                        <div class="card-content">
+                            {CARD_BACK_SVG}
+                            <div class="card-number">카드 {i + j + 1}</div>
+                        </div>
+                        """,
                         key=f"card_{i}_{j}",
-                        use_container_width=True,
-                    ):
+                        use_container_width=True):
                         selected_card = card
     
     return selected_card
