@@ -156,19 +156,24 @@ def display_card_grid(available_cards, selected_cards):
             gap: 10px;
             margin: 10px;
         }
-        .card-button {
+        .stButton > button {
              position: relative;
             width: 100px !important;
             height: 140px !important;
             padding: 0 !important;
             background: transparent !important;
             border: none !important;
-            cursor: pointer;
         }
-        .card-button:hover {
+        .stButton > button:hover {
             transform: scale(1.05);
             transition: transform 0.2s ease;
         }
+         [data-testid="stButton"] > button:focus:not(:active) {{
+                       border-color: transparent !important;
+                   }}
+         [data-testid="stButton"] > button:focus {{
+                       outline: none !important;
+                   }}
         </style>
     """, unsafe_allow_html=True)
     
@@ -191,8 +196,8 @@ def display_card_grid(available_cards, selected_cards):
                 key=f"card_{i}",
                 help=f"카드 {i + 1} 선택",
                 disabled=is_selected,
-                on_click=handle_card_selection,
-                args=(i,),
+                 on_click=handle_card_click,
+                args=(i, ),
             ):
                pass
             st.markdown(f"""
@@ -206,12 +211,7 @@ def display_card_grid(available_cards, selected_cards):
                        border: none !important;
                        {filter_style}
                    }}
-                   [data-testid="stButton"] > button:focus:not(:active) {{
-                       border-color: transparent !important;
-                   }}
-                    [data-testid="stButton"] > button:focus {{
-                       outline: none !important;
-                   }}
+
                 </style>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" width="100" height="140">
                      <rect width="100" height="140" rx="10" fill="#2a0845"/>
@@ -225,7 +225,7 @@ def display_card_grid(available_cards, selected_cards):
                      <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {i + 1}</text>
                    </svg>
             """, unsafe_allow_html=True)
-
+    
     # 빈 열 채우기
     remaining = 8 - (num_cards % 8) if num_cards % 8 != 0 else 0
     for i in range(remaining):
@@ -256,20 +256,23 @@ if 'selected_cards' not in st.session_state:
     st.session_state.selected_cards = []
 if 'current_question' not in st.session_state:
     st.session_state.current_question = ""
+if 'card_selected' not in st.session_state:
+      st.session_state.card_selected = False
 
 # 사용자의 질문 입력
 question = st.text_input("묻고 싶은게 뭐냥😸")
 
-def handle_card_selection(index):
-    available_cards = [
+def handle_card_click(index):
+     st.session_state.card_index = index
+     available_cards = [
             card for card in get_all_cards()
             if not any(c['name'] == card['name'] for c in st.session_state.selected_cards)
         ]
-    selected_card = available_cards[index]
-    if selected_card:
+     selected_card = available_cards[index]
+     if selected_card:
         card_info = get_random_card_info(selected_card)
         st.session_state.selected_cards.append(card_info)
-        st.rerun()
+        st.session_state.card_selected = True
 
 
 if question:
@@ -277,6 +280,7 @@ if question:
     if question != st.session_state.current_question:
         st.session_state.selected_cards = []
         st.session_state.current_question = question
+        st.session_state.card_selected = False
     
     # 질문 중복 체크
     if question in st.session_state.asked_questions:
@@ -295,6 +299,11 @@ if question:
             ]
             
             display_card_grid(available_cards, st.session_state.selected_cards)
+        
+        if st.session_state.card_selected:
+            st.session_state.card_selected = False
+            st.rerun()
+
 
         # 카드가 선택되었다면 결과 표시
         if st.session_state.selected_cards:
@@ -317,4 +326,5 @@ if question:
                 if st.button("츄르값 주고 물어봐라냥😼!"):
                     st.session_state.selected_cards = []
                     st.session_state.current_question = ""
+                    st.session_state.card_selected = False
                     st.rerun()
