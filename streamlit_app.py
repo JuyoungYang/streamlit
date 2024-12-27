@@ -150,7 +150,8 @@ def get_random_card_info(card):
     direction = random.choice(['forward', 'reversed'])
     card_info = card.copy()
     card_info['direction'] = direction
-    card_info['
+    card_info['interpretation'] = card_info['forward'] if direction == 'forward' else card_info['reversed']
+    return card_info
 
 def display_card_grid(available_cards):
     """카드를 그리드 형태로 표시하는 함수"""
