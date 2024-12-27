@@ -235,8 +235,6 @@ if 'selected_cards' not in st.session_state:
     st.session_state.selected_cards = []
 if 'current_question' not in st.session_state:
     st.session_state.current_question = ""
-if 'card_clicked' not in st.session_state:
-    st.session_state.card_clicked = None
 if 'card_index' not in st.session_state:
     st.session_state.card_index = None
 
@@ -248,7 +246,7 @@ st.markdown(
     """
     <script>
     function selectCard(index) {
-      window.streamlit.setSessionState({card_clicked: index});
+        window.parent.postMessage({type: 'card_selected', index: index}, '*');
     }
     </script>
     """,
@@ -264,15 +262,21 @@ def handle_card_selection(index):
     if selected_card:
         card_info = get_random_card_info(selected_card)
         st.session_state.selected_cards.append(card_info)
-        st.session_state.card_clicked = None
-      
+
+
+# JavaScript로부터 메시지를 받아 처리하는 코드
+def card_event_handler():
+    if st.session_state.card_index is not None:
+        handle_card_selection(st.session_state.card_index)
+        st.session_state.card_index = None
+        st.rerun()
 
 if question:
     # 질문이 바뀌었을 때 카드 초기화
     if question != st.session_state.current_question:
         st.session_state.selected_cards = []
         st.session_state.current_question = question
-        st.session_state.card_clicked = None
+        st.session_state.card_index = None
     
     # 질문 중복 체크
     if question in st.session_state.asked_questions:
@@ -291,11 +295,9 @@ if question:
             ]
             
             display_card_grid(available_cards, st.session_state.selected_cards)
-            
-            if st.session_state.card_clicked is not None:
-                handle_card_selection(st.session_state.card_clicked)
-                st.session_state.card_clicked = None
-                st.rerun()
+        
+        card_event_handler()
+
 
         # 카드가 선택되었다면 결과 표시
         if st.session_state.selected_cards:
@@ -318,5 +320,5 @@ if question:
                 if st.button("츄르값 주고 물어봐라냥😼!"):
                     st.session_state.selected_cards = []
                     st.session_state.current_question = ""
-                    st.session_state.card_clicked = None
+                    st.session_state.card_index = None
                     st.rerun()
