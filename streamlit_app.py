@@ -123,10 +123,10 @@ def get_all_cards():
     all_cards = []
     
     # 메이저 아르카나 카드 추가
-    for card_info in major_arcana.items():
+    for card_num, card_info in major_arcana.items(): 
         all_cards.append({
             "type": "Major Arcana",
-            "name": card_info["name"],
+            "name": card_info["name"],  
             "forward": card_info["forward"],
             "reversed": card_info["reversed"]
         })
