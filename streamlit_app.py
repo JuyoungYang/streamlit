@@ -147,21 +147,40 @@ def display_card_grid(available_cards):
     num_cards = len(available_cards)
     rows = (num_cards + 7) // 8
     
-    # 스타일 정의
+    # 스타일 정의 - 버튼과 SVG를 겹치도록 설정
     st.markdown("""
         <style>
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            padding: 10px;
+        .card-wrapper {
+            position: relative;
+            width: 100px;
+            height: 140px;
+            margin: 5px;
+        }
+        .card-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;  /* SVG를 클릭 투과되도록 설정 */
+        }
+        .stButton {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
         }
         .stButton > button {
-            background: none;
-            border: none;
-            padding: 0;
-            width: 100px;  /* 카드 크기 */
-            height: 140px;
+            width: 100% !important;
+            height: 100% !important;
+            background: transparent !important;
+            border: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            cursor: pointer;
         }
         .stButton > button:hover {
             transform: scale(1.05);
@@ -182,26 +201,27 @@ def display_card_grid(available_cards):
             current_card = available_cards[i]
             
             with cols[col_idx]:
-                # SVG와 버튼을 결합
                 st.markdown(f"""
-                    <div style="width: 100%; text-align: center;">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
-                            <rect width="100" height="140" rx="10" fill="#2a0845"/>
-                            <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
-                            <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
-                                  fill="none" stroke="#9d4edd" stroke-width="2"/>
-                            <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
-                            <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
-                            <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
-                            <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
-                            <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {i + 1}</text>
-                        </svg>
-                    </div>
+                    <div class="card-wrapper">
+                        <div class="card-svg">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
+                                <rect width="100" height="140" rx="10" fill="#2a0845"/>
+                                <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
+                                <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
+                                      fill="none" stroke="#9d4edd" stroke-width="2"/>
+                                <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
+                                <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
+                                <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
+                                <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
+                                <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {i + 1}</text>
+                            </svg>
+                        </div>
                 """, unsafe_allow_html=True)
                 
-                # 투명한 버튼
-                if st.button("##", key=f"card_{i}"):
+                if st.button("", key=f"card_{i}"):
                     selected_card = current_card
+                    
+                st.markdown("</div>", unsafe_allow_html=True)
 
         # 남은 열 채우기
         for col_idx in range((end_idx - start_idx), 8):
