@@ -8,18 +8,9 @@ client = OpenAI(
 )
 
 CARD_BACK_SVG = '''
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" preserveAspectRatio="xMidYMid meet">
-    <rect width="100" height="140" rx="10" fill="#2a0845"/>
-    <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
-    <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
-          fill="none" stroke="#9d4edd" stroke-width="2"/>
-    <circle cx="15" cy="15" r="5" fill="#9d4edd"/>
-    <circle cx="85" cy="15" r="5" fill="#9d4edd"/>
-    <circle cx="15" cy="125" r="5" fill="#9d4edd"/>
-    <circle cx="85" cy="125" r="5" fill="#9d4edd"/>
-    <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle" dominant-baseline="middle">
-        카드 {index}
-    </text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
+    <!-- SVG 내용 -->
+    <text x="50" y="135" fill="#9d4edd" font-size="8" text-anchor="middle">카드 {}</text>
 </svg>
 '''
 
@@ -184,7 +175,7 @@ def display_card_grid(available_cards):
     st.write('<div class="card-container">', unsafe_allow_html=True)
     
     for i, card in enumerate(available_cards):
-        card_svg = CARD_BACK_SVG.format(index=i + 1)
+        card_svg = CARD_BACK_SVG.format(i + 1)
         button_html = f"""
         <button class="card-content" onclick="document.getElementById('card_{i}').click()">
             {card_svg}
