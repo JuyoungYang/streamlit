@@ -8,7 +8,7 @@ client = OpenAI(
     api_key = st.secrets["openai"]["api_key"]
 )
 
-# 타로 카드 정보 (기존 코드와 동일)
+# 메이저 아르카나 카드 정의
 major_arcana = {
     0: {"name": "The Fool", "forward": "새로운 시작, 모험, 순수", "reversed": "어리석음, 경솔함, 위험"},
     1: {"name": "The Magician", "forward": "능력, 창의성, 의지", "reversed": "기만, 속임수, 무능력"},
@@ -34,7 +34,7 @@ major_arcana = {
     21: {"name": "The World", "forward": "완성, 성취, 통합", "reversed": "미완성, 실패, 정체"},
 }
 
-# 마이너 아르카나 카드 (슈트별로 분리, 정방향/역방향 의미 포함)
+# 마이너 아르카나 카드 정의
 minor_arcana = {
     "Wands": {
         "Ace": {"forward": "새로운 시작, 창의력, 열정", "reversed": "미완성, 좌절, 무기력"},
@@ -102,28 +102,61 @@ minor_arcana = {
     },
 }
 
-# 타로카드 해석 함수
-def interpret_card(card_name, direction):
-    if direction == "forward":
-        return card_name['forward']
-    else:
-        return card_name['reversed']
-
-# 타로카드를 뽑는 로직
-def draw_tarot():
-    # 랜덤으로 3장 카드 뽑기
-    selected_cards = random.sample(list(major_arcana.values()), 3)
+def get_all_cards():
+    """모든 카드 목록을 반환하는 함수"""
+    all_cards = []
     
-    cards = []
-    for card in selected_cards:
-        # 정방향 또는 역방향 설정
-        direction = random.choice(['forward', 'reversed'])
-        cards.append({
-            "name": card["name"],
-            "direction": direction,
-            "interpretation": interpret_card(card, direction)
+    # 메이저 아르카나 카드 추가
+    for card_num, card_info in major_arcana.items():
+        all_cards.append({
+            "type": "Major Arcana",
+            "name": card_info["name"],
+            "forward": card_info["forward"],
+            "reversed": card_info["reversed"]
         })
-    return cards
+    
+    # 마이너 아르카나 카드 추가
+    for suit, cards in minor_arcana.items():
+        for rank, meanings in cards.items():
+            all_cards.append({
+                "type": "Minor Arcana",
+                "suit": suit,
+                "rank": rank,
+                "name": f"{rank} of {suit}",
+                "forward": meanings["forward"],
+                "reversed": meanings["reversed"]
+            })
+    
+    return all_cards
+
+def get_random_card_info(card):
+    """카드에 랜덤한 방향을 추가하는 함수"""
+    direction = random.choice(['forward', 'reversed'])
+    card_info = card.copy()
+    card_info['direction'] = direction
+    card_info['interpretation'] = card_info['forward'] if direction == 'forward' else card_info['reversed']
+    return card_info
+
+def draw_random_cards(num_cards=3):
+    """랜덤하게 카드를 뽑는 함수"""
+    all_cards = get_all_cards()
+    selected_cards = random.sample(all_cards, num_cards)
+    return [get_random_card_info(card) for card in selected_cards]
+
+def display_card_grid(available_cards):
+    """카드를 그리드 형태로 표시하는 함수"""
+    cols_per_row = 6  # 한 줄에 6개의 카드 표시
+    
+    for i in range(0, len(available_cards), cols_per_row):
+        cols = st.columns(cols_per_row)
+        for j, col in enumerate(cols):
+            if i + j < len(available_cards):
+                card = available_cards[i + j]
+                # 메이저 아르카나는 카드 이름만, 마이너 아르카나는 suit와 rank 표시
+                display_name = card['name'] if card['type'] == 'Major Arcana' else f"{card['rank']} of {card['suit']}"
+                if col.button(display_name, key=f"card_{i}_{j}"):
+                    return card
+    return None
 
 # AI 해석 함수
 def generate_ai_interpretation(question, cards):
@@ -152,25 +185,82 @@ st.title("🔮 냥타로")
 # 서브헤더로 안내 문구 표시
 st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾")
 
+# 세션 스테이트 초기화
+if 'asked_questions' not in st.session_state:
+    st.session_state.asked_questions = set()
+if 'selected_cards' not in st.session_state:
+    st.session_state.selected_cards = []
+
 # 사용자의 질문 입력
 question = st.text_input("묻고 싶은게 뭐냥😸")
 
 if question:
-    # 타로카드 뽑기
-    cards = draw_tarot()
-    
-    st.divider()
-    
-    # 뽑은 카드 정보 출력
-    st.header("오호라🐱 세가지 카드가 뽑혔다냥!😸")
-    for card in cards:
-        st.write(f"**{card['name']}** ({card['direction']}): {card['interpretation']}")
+    # 질문 중복 체크
+    if question in st.session_state.asked_questions:
+        st.error("이미 물어본 질문이다냥! 다른 걸 물어보라냥! 😾")
+    else:
+        st.divider()
+        
+        # 카드 선택 UI
+        if len(st.session_state.selected_cards) < 3:
+            st.write(f"### {len(st.session_state.selected_cards) + 1}번째 카드를 선택하라냥")
+            # 남은 카드 중에서 선택
+            available_cards = [card for card in get_all_cards() 
+                             if card not in st.session_state.selected_cards]
+            
+            selected_card = display_card_grid(available_cards)
+            if selected_card:
+                # 선택된 카드에 랜덤 방향 추가
+                card_info = get_random_card_info(selected_card)
+                st.session_state.selected_cards.append(card_info)
+                st.rerun()
 
-    st.divider()
-    
-    # AI 해석 결과 가져오기
-    ai_interpretation = generate_ai_interpretation(question, cards)
+        # 카드가 선택되었다면 결과 표시
+        if st.session_state.selected_cards:
+            st.divider()
+            st.header("이런 카드들이 나왔다냥!😸")
+            for idx, card in enumerate(st.session_state.selected_cards, 1):
+                direction_text = "정방향" if card['direction'] == 'forward' else "역방향"
+                st.write(f"**{idx}. {card['name']}** ({direction_text}): {card['interpretation']}")
+            
+            # 모든 카드가 선택되었을 때만 해석 표시
+            if len(st.session_state.selected_cards) == 3:
+                st.divider()
+                st.header("의미를 알려주겠다냥!😺")
+                ai_interpretation = generate_ai_interpretation(question, st.session_state.selected_cards)
+                st.write(ai_interpretation)
+                
+                # 해석이 완료되면 질문을 기록
+                st.session_state.asked_questions.add(question)
+            
+            # 리셋 버튼 (새로운 질문을 위해)
+            if st.button("다시 보겠다냥!"):
+                st.session_state.selected_cards = []
+                st.rerun()
 
-    # 응답 결과 가져오기
-    st.header("의미를 알려주겠다냥!😺")
-    st.write(ai_interpretation)
+# 이전에 했던 질문들 표시 (옵션)
+if st.session_state.asked_questions:
+    st.divider()
+    st.write("### 이전에 물어봤던 질문이다냥! 😾")
+    for q in st.session_state.asked_questions:
+        st.write(f"- {q}")
+
+# if question:
+#     # 타로카드 뽑기
+#     cards = draw_tarot()
+    
+#     st.divider()
+    
+#     # 뽑은 카드 정보 출력
+#     st.header("오호라🐱 세가지 카드가 뽑혔다냥!😸")
+#     for card in cards:
+#         st.write(f"**{card['name']}** ({card['direction']}): {card['interpretation']}")
+
+#     st.divider()
+    
+#     # AI 해석 결과 가져오기
+#     ai_interpretation = generate_ai_interpretation(question, cards)
+
+#     # 응답 결과 가져오기
+#     st.header("의미를 알려주겠다냥!😺")
+#     st.write(ai_interpretation)
