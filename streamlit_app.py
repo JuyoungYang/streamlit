@@ -269,34 +269,6 @@ def generate_ai_interpretation(question, cards):
         return response.choices[0].message.content.strip()
 
 
-# 페이지 레이아웃 스타일 설정
-st.markdown("""
-    <style>
-    /* 외곽 여백 색상 */
-    .stApp {
-        background-color: #f6eef6;
-    }
-    
-    /* 메인 콘텐츠 영역 스타일 */
-    .st-emotion-cache-uf99v8, .st-emotion-cache-r421ms {
-        background-color: white !important;
-        border-radius: 10px;
-        padding: 2rem;
-    }
-
-    /* 사이드바 배경색 */
-    .st-emotion-cache-1gulkj5 {
-        background-color: #f6eef6;
-    }
-
-    /* 타이틀과 부제목 사이 간격 */
-    .st-emotion-cache-10trblm {
-        margin-bottom: 1.5rem;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-
 # 타이틀 표시
 st.title("🔮 냥타로")
 
