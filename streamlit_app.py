@@ -164,29 +164,27 @@ def display_card_grid(available_cards, selected_cards):
         .selected-card {
             filter: grayscale(100%);
         }
+        .disabled-slot {
+            pointer-events: none;
+            opacity: 0.7;
+        }
         </style>
     """, unsafe_allow_html=True)
     
     # 카드 그리드를 생성
     cols = st.columns(8)
     
+    # 선택된 위치 추적
+    if 'selected_positions' not in st.session_state:
+        st.session_state.selected_positions = set()
+    
     # 카드 배치
     for i, card in enumerate(available_cards):
         col_idx = i % 8
         with cols[col_idx]:
-            # 선택된 카드인지 확인
-            is_selected = any(c['name'] == card['name'] for c in selected_cards)
-            
-            # 버튼 생성
-            if not is_selected:
-                if st.button(f"카드 {i + 1}", key=f"card_{i}", use_container_width=True):
-                    card_info = get_random_card_info(card)
-                    st.session_state.selected_cards.append(card_info)
-                    st.rerun()
-            
             # 카드 이미지 표시
             st.markdown(f"""
-                <div class="card {'selected-card' if is_selected else ''}">
+                <div class="card {'selected-card' if i in st.session_state.selected_positions else ''}">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" width="100" height="140">
                         <rect width="100" height="140" rx="10" fill="#2a0845"/>
                         <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
@@ -200,6 +198,16 @@ def display_card_grid(available_cards, selected_cards):
                     </svg>
                 </div>
             """, unsafe_allow_html=True)
+            
+            # 버튼 생성
+            if i not in st.session_state.selected_positions:
+                if st.button(f"카드 {i + 1}", key=f"card_{i}", use_container_width=True):
+                    card_info = get_random_card_info(card)
+                    st.session_state.selected_cards.append(card_info)
+                    st.session_state.selected_positions.add(i)
+                    st.rerun()
+            else:
+                st.empty()  # 선택된 위치는 빈 컨테이너 표시
 
     # 빈 열 채우기
     remaining = 8 - (num_cards % 8) if num_cards % 8 != 0 else 0
@@ -231,6 +239,8 @@ if 'selected_cards' not in st.session_state:
     st.session_state.selected_cards = []
 if 'current_question' not in st.session_state:
     st.session_state.current_question = ""
+if 'selected_positions' not in st.session_state:
+    st.session_state.selected_positions = set()
 
 # 사용자의 질문 입력
 question = st.text_input("묻고 싶은게 뭐냥😸")
@@ -239,8 +249,8 @@ if question:
     # 질문이 바뀌었을 때 카드 초기화
     if question != st.session_state.current_question:
         st.session_state.selected_cards = []
+        st.session_state.selected_positions = set()  # 추가
         st.session_state.current_question = question
-        st.session_state.card_clicked = None
     
     # 질문 중복 체크
     if question in st.session_state.asked_questions:
