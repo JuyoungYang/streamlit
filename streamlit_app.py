@@ -268,6 +268,20 @@ def generate_ai_interpretation(question, cards):
         )
         return response.choices[0].message.content.strip()
 
+# 페이지 배경색 설정
+st.markdown("""
+    <style>
+    .stApp {
+        background-color: #f3e5f5;  # 연보라색
+    }
+    /*선택적: 사이드바 배경색도 맞추기*/
+    .st-emotion-cache-1gulkj5 {
+        background-color: #f3e5f5;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+
 # Streamlit UI
 st.title("🔮 냥타로")
 st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾")
