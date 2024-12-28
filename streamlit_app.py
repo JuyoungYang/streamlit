@@ -212,7 +212,7 @@ def display_card_grid(available_cards, selected_cards):
             
             # 버튼 생성 (disabled 속성 사용)
             st.button(
-                f"카드 {i + 1}", 
+                "💜", 
                 key=f"card_{i}", 
                 disabled=is_selected,
                 use_container_width=True
