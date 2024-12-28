@@ -156,26 +156,18 @@ def display_card_grid(available_cards, selected_cards):
             gap: 10px;
             margin: 10px;
         }
-        .card-button {
-            position: relative;
+        .card {
             width: 100px;
             height: 140px;
-            padding: 0;
-            background: transparent;
-            border: none;
-            cursor: pointer;
+            margin: 5px;
         }
-        .card-button:hover {
-            transform: scale(1.05);
-            transition: transform 0.2s ease;
-        }
-         .selected-card {{
+        .selected-card {
             filter: grayscale(100%);
-         }}
+        }
         </style>
     """, unsafe_allow_html=True)
     
-    # 카드 그리드를 한 번에 생성
+    # 카드 그리드를 생성
     cols = st.columns(8)
     
     # 카드 배치
@@ -185,12 +177,16 @@ def display_card_grid(available_cards, selected_cards):
             # 선택된 카드인지 확인
             is_selected = any(c['name'] == card['name'] for c in selected_cards)
             
-            # 회색조 스타일 적용 (선택된 카드인 경우)
-            selected_class = "selected-card" if is_selected else ""
+            # 버튼 생성
+            if not is_selected:
+                if st.button(f"카드 {i + 1}", key=f"card_{i}", use_container_width=True):
+                    card_info = get_random_card_info(card)
+                    st.session_state.selected_cards.append(card_info)
+                    st.rerun()
             
-            # 카드 버튼 및 스타일 설정
+            # 카드 이미지 표시
             st.markdown(f"""
-                <div class="card-button {selected_class}" onclick="selectCard({i})">
+                <div class="card {'selected-card' if is_selected else ''}">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" width="100" height="140">
                         <rect width="100" height="140" rx="10" fill="#2a0845"/>
                         <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
@@ -235,39 +231,9 @@ if 'selected_cards' not in st.session_state:
     st.session_state.selected_cards = []
 if 'current_question' not in st.session_state:
     st.session_state.current_question = ""
-if 'card_clicked' not in st.session_state:
-    st.session_state.card_clicked = None
 
 # 사용자의 질문 입력
 question = st.text_input("묻고 싶은게 뭐냥😸")
-
-# JavaScript 함수를 정의합니다.
-st.markdown(
-    """
-    <script>
-    function selectCard(index) {
-      window.streamlit.setSessionState({card_clicked: String(index)});
-    }
-    </script>
-    """,
-    unsafe_allow_html=True,
-)
-
-def handle_card_selection(index):
-    available_cards = [
-            card for card in get_all_cards()
-            if not any(c['name'] == card['name'] for c in st.session_state.selected_cards)
-        ]
-    selected_card = available_cards[int(index)]
-    if selected_card:
-        card_info = get_random_card_info(selected_card)
-        st.session_state.selected_cards.append(card_info)
-        st.session_state.card_clicked = None
-        st.rerun()
-        
-# JavaScript로부터 메시지를 받아 처리하는 코드
-if st.session_state.card_clicked is not None:
-    handle_card_selection(st.session_state.card_clicked)
 
 if question:
     # 질문이 바뀌었을 때 카드 초기화
