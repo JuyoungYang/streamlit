@@ -268,6 +268,8 @@ def generate_ai_interpretation(question, cards):
         )
         return response.choices[0].message.content.strip()
 
+# 1. 같은 폴더에 있는 이미지, 페이지 너비에 맞게 자동으로 조정
+st.image("images/cat_tarot.jpg", use_column_width=True)
 
 # 타이틀 표시
 st.title("🔮 냥타로")
