@@ -272,11 +272,11 @@ def generate_ai_interpretation(question, cards):
 st.markdown("""
     <style>
     .stApp {
-        background-color: #f3e5f5;  # 연보라색
+        background-color: #f6eef6;  # 연보라색
     }
     /*선택적: 사이드바 배경색도 맞추기*/
     .st-emotion-cache-1gulkj5 {
-        background-color: #f3e5f5;
+        background-color: #f6eef6;
     }
     </style>
 """, unsafe_allow_html=True)
