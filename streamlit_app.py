@@ -145,21 +145,24 @@ def get_random_card_info(card):
 
 
 def display_card_grid(available_cards, selected_cards):
-    num_cards = len(available_cards)
+    # 가능한 카드들을 랜덤하게 섞기
+    shuffled_cards = available_cards.copy()
+    random.shuffle(shuffled_cards)
+    num_cards = len(shuffled_cards)
     
     # CSS 스타일 정의
     st.markdown("""
         <style>
         .card-container {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 10px;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
         }
         .card {
             width: 100px;
             height: 140px;
-            margin: 5px;
         }
         .selected-card {
             filter: grayscale(100%);
@@ -178,6 +181,14 @@ def display_card_grid(available_cards, selected_cards):
             color: #888888 !important;
             border-color: #cccccc !important;
         }
+        /* 버튼 크기와 위치 조정 */
+        .stButton button {
+            min-height: 0px !important;
+            width: 60px !important;
+            padding: 2px 8px !important;
+            margin: 0 auto !important;
+            line-height: 1.6 !important;
+        }
         </style>
     """, unsafe_allow_html=True)
     
@@ -189,9 +200,12 @@ def display_card_grid(available_cards, selected_cards):
         st.session_state.selected_positions = set()
     
     # 카드 배치
-    for i, card in enumerate(available_cards):
+    for i, card in enumerate(shuffled_cards):
         col_idx = i % 8
         with cols[col_idx]:
+            # 카드와 버튼을 감싸는 컨테이너
+            st.markdown('<div class="card-container">', unsafe_allow_html=True)
+            
             # 카드 이미지 표시
             is_selected = i in st.session_state.selected_positions
             st.markdown(f"""
@@ -210,13 +224,15 @@ def display_card_grid(available_cards, selected_cards):
                 </div>
             """, unsafe_allow_html=True)
             
-            # 버튼 생성 (disabled 속성 사용)
+            # 버튼 생성
             st.button(
                 "💜", 
                 key=f"card_{i}", 
-                disabled=is_selected,
-                use_container_width=True
+                disabled=is_selected
             )
+            
+            # 컨테이너 닫기
+            st.markdown('</div>', unsafe_allow_html=True)
             
             # 버튼이 클릭되고 활성화된 상태일 때만 처리
             if not is_selected and st.session_state.get(f"card_{i}"):
@@ -224,7 +240,7 @@ def display_card_grid(available_cards, selected_cards):
                 st.session_state.selected_cards.append(card_info)
                 st.session_state.selected_positions.add(i)
                 st.rerun()
-
+    
     # 빈 열 채우기
     remaining = 8 - (num_cards % 8) if num_cards % 8 != 0 else 0
     for i in range(remaining):
