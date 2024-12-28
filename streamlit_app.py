@@ -269,7 +269,7 @@ def generate_ai_interpretation(question, cards):
         return response.choices[0].message.content.strip()
 
 
-# 페이지 레이아웃과 입력창 스타일 설정
+# 페이지 레이아웃 스타일 설정
 st.markdown("""
     <style>
     /* 외곽 여백 색상 */
@@ -278,8 +278,8 @@ st.markdown("""
     }
     
     /* 메인 콘텐츠 영역 스타일 */
-    .st-emotion-cache-uf99v8 {
-        background-color: white;
+    .st-emotion-cache-uf99v8, .st-emotion-cache-r421ms {
+        background-color: white !important;
         border-radius: 10px;
         padding: 2rem;
     }
@@ -287,20 +287,6 @@ st.markdown("""
     /* 사이드바 배경색 */
     .st-emotion-cache-1gulkj5 {
         background-color: #f6eef6;
-    }
-
-    /* 입력창 스타일 */
-    .st-emotion-cache-16idsys p, .st-emotion-cache-16idsys textarea {
-        border: 2px solid #9d4edd !important;
-        border-radius: 5px !important;
-        padding: 5px !important;
-    }
-    
-    /* 입력창 컨테이너 스타일 */
-    .st-emotion-cache-1x8cf1d {
-        border: 2px solid #9d4edd !important;
-        border-radius: 5px !important;
-        padding: 5px !important;
     }
 
     /* 타이틀과 부제목 사이 간격 */
