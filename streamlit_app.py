@@ -157,15 +157,22 @@ def display_card_grid(available_cards, selected_cards):
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 80px;  /* 컨테이너 너비 조정 */
+            margin: 0 auto;  /* 중앙 정렬 */
             gap: 5px;
-            margin-bottom: 10px;
         }
         .card {
-            width: 100px;
-            height: 140px;
+            width: 80px;  /* 카드 크기 축소 */
+            height: 112px;  /* 비율 유지하며 축소 (140 * 0.8) */
+            margin: 0;
+            padding: 0;
         }
         .selected-card {
             filter: grayscale(100%);
+        }
+        /* 열 간격 조정 */
+        .st-emotion-cache-1r6slb0 {
+            gap: 0.5rem !important;
         }
         /* 비활성화된 버튼 스타일 */
         .stButton button:disabled {
@@ -184,10 +191,11 @@ def display_card_grid(available_cards, selected_cards):
         /* 버튼 크기와 위치 조정 */
         .stButton button {
             min-height: 0px !important;
-            width: 60px !important;
-            padding: 2px 8px !important;
-            margin: 0 auto !important;
+            width: 40px !important;  /* 버튼 너비 축소 */
+            padding: 0px 8px !important;
+            margin: 2px auto !important;  /* 상하 여백 추가 */
             line-height: 1.6 !important;
+            display: block !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -210,7 +218,7 @@ def display_card_grid(available_cards, selected_cards):
             is_selected = i in st.session_state.selected_positions
             st.markdown(f"""
                 <div class="card {'selected-card' if is_selected else ''}">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" width="100" height="140">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" width="80" height="112">
                         <rect width="100" height="140" rx="10" fill="#2a0845"/>
                         <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
                         <path d="M50 45L57 65L78 65L61 78L68 98L50 85L32 98L39 78L22 65L43 65Z" 
@@ -262,7 +270,7 @@ def generate_ai_interpretation(question, cards):
 
 # Streamlit UI
 st.title("🔮 냥타로")
-st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾", divider='rainbow')
+st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾")
 
 
 # 세션 스테이트 초기화
@@ -276,7 +284,7 @@ if 'selected_positions' not in st.session_state:
     st.session_state.selected_positions = set()
 
 # 사용자의 질문 입력
-question = st.text_input("묻고 싶은게 뭐냥😸")
+question = st.text_input("묻고 싶은게 뭐냥😸", key="question_input")
 
 if question:
     # 질문이 바뀌었을 때 카드 초기화
@@ -324,5 +332,5 @@ if question:
                 if st.button("츄르값 주고 물어봐라냥😼!"):
                     st.session_state.selected_cards = []
                     st.session_state.current_question = ""
-                    st.session_state.card_clicked = None
+                    st.session_state.question_input = ""  # 입력창 비우기
                     st.rerun()
