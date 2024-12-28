@@ -262,8 +262,8 @@ def generate_ai_interpretation(question, cards):
 
 # Streamlit UI
 st.title("🔮 냥타로")
-st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾")
-st.divider(rainbow)
+st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾", divider='rainbow')
+
 
 # 세션 스테이트 초기화
 if 'asked_questions' not in st.session_state:
