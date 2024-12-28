@@ -164,9 +164,19 @@ def display_card_grid(available_cards, selected_cards):
         .selected-card {
             filter: grayscale(100%);
         }
-        .disabled-slot {
-            pointer-events: none;
+        /* 비활성화된 버튼 스타일 */
+        .stButton button:disabled {
+            background-color: #e0e0e0 !important;
+            color: #888888 !important;
             opacity: 0.7;
+            cursor: not-allowed;
+            border-color: #cccccc !important;
+        }
+        /* 버튼 호버 효과 제거 */
+        .stButton button:disabled:hover {
+            background-color: #e0e0e0 !important;
+            color: #888888 !important;
+            border-color: #cccccc !important;
         }
         </style>
     """, unsafe_allow_html=True)
@@ -183,8 +193,9 @@ def display_card_grid(available_cards, selected_cards):
         col_idx = i % 8
         with cols[col_idx]:
             # 카드 이미지 표시
+            is_selected = i in st.session_state.selected_positions
             st.markdown(f"""
-                <div class="card {'selected-card' if i in st.session_state.selected_positions else ''}">
+                <div class="card {'selected-card' if is_selected else ''}">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140" width="100" height="140">
                         <rect width="100" height="140" rx="10" fill="#2a0845"/>
                         <rect x="5" y="7" width="90" height="126" rx="8" fill="none" stroke="#9d4edd" stroke-width="2"/>
@@ -199,15 +210,20 @@ def display_card_grid(available_cards, selected_cards):
                 </div>
             """, unsafe_allow_html=True)
             
-            # 버튼 생성
-            if i not in st.session_state.selected_positions:
-                if st.button(f"카드 {i + 1}", key=f"card_{i}", use_container_width=True):
-                    card_info = get_random_card_info(card)
-                    st.session_state.selected_cards.append(card_info)
-                    st.session_state.selected_positions.add(i)
-                    st.rerun()
-            else:
-                st.empty()  # 선택된 위치는 빈 컨테이너 표시
+            # 버튼 생성 (disabled 속성 사용)
+            st.button(
+                f"카드 {i + 1}", 
+                key=f"card_{i}", 
+                disabled=is_selected,
+                use_container_width=True
+            )
+            
+            # 버튼이 클릭되고 활성화된 상태일 때만 처리
+            if not is_selected and st.session_state.get(f"card_{i}"):
+                card_info = get_random_card_info(card)
+                st.session_state.selected_cards.append(card_info)
+                st.session_state.selected_positions.add(i)
+                st.rerun()
 
     # 빈 열 채우기
     remaining = 8 - (num_cards % 8) if num_cards % 8 != 0 else 0
