@@ -290,23 +290,34 @@ st.markdown("""
     }
 
     /* 입력창 스타일 */
-    .st-emotion-cache-16idsys {
-        border: 2px solid #9d4edd;  /* 보라색 테두리 */
-        border-radius: 5px;
-        padding: 5px;
+    .st-emotion-cache-16idsys p, .st-emotion-cache-16idsys textarea {
+        border: 2px solid #9d4edd !important;
+        border-radius: 5px !important;
+        padding: 5px !important;
     }
     
-    /* 입력창 포커스 시 스타일 */
-    .st-emotion-cache-16idsys:focus-within {
-        border-color: #9d4edd;  /* 같은 보라색 유지 */
-        box-shadow: 0 0 3px #9d4edd44;  /* 부드러운 그림자 효과 */
+    /* 입력창 컨테이너 스타일 */
+    .st-emotion-cache-1x8cf1d {
+        border: 2px solid #9d4edd !important;
+        border-radius: 5px !important;
+        padding: 5px !important;
+    }
+
+    /* 타이틀과 부제목 사이 간격 */
+    .st-emotion-cache-10trblm {
+        margin-bottom: 1.5rem;
     }
     </style>
 """, unsafe_allow_html=True)
 
 
-# Streamlit UI
+# 타이틀 표시
 st.title("🔮 냥타로")
+
+# 부제목 위 여백 추가
+st.markdown("<br>", unsafe_allow_html=True)
+
+# 부제목 표시
 st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾")
 
 
