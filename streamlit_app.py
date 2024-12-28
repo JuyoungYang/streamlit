@@ -268,13 +268,23 @@ def generate_ai_interpretation(question, cards):
         )
         return response.choices[0].message.content.strip()
 
-# 페이지 배경색 설정
+
+# 페이지 레이아웃 스타일 설정
 st.markdown("""
     <style>
+    /* 외곽 여백 색상 */
     .stApp {
-        background-color: #f6eef6;  # 연보라색
+        background-color: #f6eef6;
     }
-    /*선택적: 사이드바 배경색도 맞추기*/
+    
+    /* 메인 콘텐츠 영역 스타일 */
+    .st-emotion-cache-uf99v8 {
+        background-color: white;
+        border-radius: 10px;  /* 선택적: 모서리를 둥글게 */
+        padding: 2rem;  /* 선택적: 내부 여백 */
+    }
+
+    /* 사이드바 배경색 */
     .st-emotion-cache-1gulkj5 {
         background-color: #f6eef6;
     }
