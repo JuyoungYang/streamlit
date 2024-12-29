@@ -269,35 +269,94 @@ def generate_ai_interpretation(question, cards):
         return response.choices[0].message.content.strip()
 
 
-# 타이틀 표시
-st.title("🔮 냥타로")
+def main():
+    # 페이지 기본 설정
+    st.set_page_config(page_title="냥타로", page_icon="🔮")
+    
+    # 세션 상태 초기화
+    if 'show_content' not in st.session_state:
+        st.session_state.show_content = False
+        
+    # 시작 화면
+    st.image('C:/Users/omega/바탕 화면/practice-py/Tarot-project')
+    st.title("🔮 냥타로")
+    
+    # 입장하기 버튼
+    if not st.session_state.show_content:
+        if st.button("입장하기"):
+            st.session_state.show_content = True
+            st.rerun()
+    
+    # 입장 후 콘텐츠
+    if st.session_state.show_content:
+        # 부제목 위 여백 추가
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # 부제목 표시
+        st.subheader("반갑다냥!😺")
+        st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼")
+        st.subheader("궁금한걸 묻고 카드 3장을 뽑으면 된다냥!🐾")
+        
+        # 세션 스테이트 초기화
+        if 'asked_questions' not in st.session_state:
+            st.session_state.asked_questions = set()
+        if 'selected_cards' not in st.session_state:
+            st.session_state.selected_cards = []
+        if 'current_question' not in st.session_state:
+            st.session_state.current_question = ""
+        if 'selected_positions' not in st.session_state:
+            st.session_state.selected_positions = set()
 
-# 부제목 위 여백 추가
-st.markdown("<br>", unsafe_allow_html=True)
+        # 사용자의 질문 입력
+        question = st.text_input("묻고 싶은게 뭐냥😸", key="question_input")
+        
+        if question:
+            # 질문이 바뀌었을 때 카드 초기화
+            if question != st.session_state.current_question:
+                st.session_state.selected_cards = []
+                st.session_state.selected_positions = set()
+                st.session_state.current_question = question
+            
+            # 이하 기존 코드와 동일...
+            # (카드 선택 및 결과 표시 로직)
 
-# 부제목 표시
-st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾")
+if __name__ == "__main__":
+    main()
+    
+# #이미지
+# st.image('C:\Users\omega\바탕 화면\practice-py\Tarot-project')
+
+# # 타이틀 표시
+# st.title("🔮 냥타로")
+
+# # 부제목 위 여백 추가
+# st.markdown("<br>", unsafe_allow_html=True)
+
+# # 부제목 표시
+# st.subheader("반갑다냥!😺")
+# st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼")
+# st.subheader("궁금한걸 묻고 카드 3장을 뽑으면 된다냥!🐾")
 
 
-# 세션 스테이트 초기화
-if 'asked_questions' not in st.session_state:
-    st.session_state.asked_questions = set()
-if 'selected_cards' not in st.session_state:
-    st.session_state.selected_cards = []
-if 'current_question' not in st.session_state:
-    st.session_state.current_question = ""
-if 'selected_positions' not in st.session_state:
-    st.session_state.selected_positions = set()
+# # 세션 스테이트 초기화
+# if 'asked_questions' not in st.session_state:
+#     st.session_state.asked_questions = set()
+# if 'selected_cards' not in st.session_state:
+#     st.session_state.selected_cards = []
+# if 'current_question' not in st.session_state:
+#     st.session_state.current_question = ""
+# if 'selected_positions' not in st.session_state:
+#     st.session_state.selected_positions = set()
 
-# 사용자의 질문 입력
-question = st.text_input("묻고 싶은게 뭐냥😸", key="question_input")
+# # 사용자의 질문 입력
+# question = st.text_input("묻고 싶은게 뭐냥😸", key="question_input")
 
-if question:
-    # 질문이 바뀌었을 때 카드 초기화
-    if question != st.session_state.current_question:
-        st.session_state.selected_cards = []
-        st.session_state.selected_positions = set()  # 추가
-        st.session_state.current_question = question
+# if question:
+#     # 질문이 바뀌었을 때 카드 초기화
+#     if question != st.session_state.current_question:
+#         st.session_state.selected_cards = []
+#         st.session_state.selected_positions = set()  # 추가
+#         st.session_state.current_question = question
     
     # 질문 중복 체크
     if question in st.session_state.asked_questions:
@@ -319,7 +378,6 @@ if question:
 
         # 카드가 선택되었다면 결과 표시
         if st.session_state.selected_cards:
-            st.header("오호라🐱")
             for idx, card in enumerate(st.session_state.selected_cards, 1):
                 direction_text = "정방향" if card['direction'] == 'forward' else "역방향"
                 st.write(f"**{idx}. {card['name']}** ({direction_text}): {card['interpretation']}")
@@ -327,6 +385,7 @@ if question:
             # 모든 카드가 선택되었을 때만 해석 표시
             if len(st.session_state.selected_cards) == 3:
                 st.divider()
+                st.header("오호라🐱")
                 st.header("의미를 알려주겠다냥!😺")
                 ai_interpretation = generate_ai_interpretation(question, st.session_state.selected_cards)
                 st.write(ai_interpretation)
