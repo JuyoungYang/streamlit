@@ -268,8 +268,11 @@ def generate_ai_interpretation(question, cards):
         )
         return response.choices[0].message.content.strip()
 
-#이미지
-st.image('C:/Users/omega/바탕 화면/practice-py/Tarot-project')
+# 페이지 기본 설정
+st.set_page_config(page_title="냥타로", page_icon="🔮")
+
+# 이미지와 타이틀 표시
+st.image("C:/Users/omega/바탕 화면/practice-py/Tarot-project/images/cat_tarot.jpg", use_column_width=True)
 
 # 타이틀 표시
 st.title("🔮 냥타로")
