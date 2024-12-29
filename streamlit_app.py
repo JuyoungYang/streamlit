@@ -272,7 +272,13 @@ def generate_ai_interpretation(question, cards):
 st.set_page_config(page_title="냥타로", page_icon="🔮")
 
 # 이미지와 타이틀 표시
-st.image("C:/Users/omega/바탕 화면/practice-py/Tarot-project/images/cat_tarot.jpg", use_column_width=True)
+try:
+    with open("images/cat_tarot.jpg", "rb") as file:
+        image_bytes = file.read()
+    st.image(image_bytes, use_container_width=True)
+except Exception as e:
+    st.error("이미지를 불러올 수 없습니다.")
+    print(f"이미지 로드 에러: {e}")
 
 # 타이틀 표시
 st.title("🔮 냥타로")
