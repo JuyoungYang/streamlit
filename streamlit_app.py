@@ -269,7 +269,7 @@ def generate_ai_interpretation(question, cards):
         return response.choices[0].message.content.strip()
 
 #이미지
-st.image('C:\Users\omega\바탕 화면\practice-py\Tarot-project')
+st.image('C:/Users/omega/바탕 화면/practice-py/Tarot-project')
 
 # 타이틀 표시
 st.title("🔮 냥타로")
