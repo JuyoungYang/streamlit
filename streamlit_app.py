@@ -288,9 +288,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 # 부제목 표시
 st.subheader("반갑다냥!😺")
-st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼")
-st.subheader("궁금한걸 묻고 카드 3장을 뽑으면 된다냥!🐾")
-
+st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾")
 
 # 세션 스테이트 초기화
 if 'asked_questions' not in st.session_state:
@@ -303,7 +301,7 @@ if 'selected_positions' not in st.session_state:
     st.session_state.selected_positions = set()
 
 # 사용자의 질문 입력
-question = st.text_input("묻고 싶은게 뭐냥😸", key="question_input")
+question = st.text_input("궁금한걸 묻고 카드 3장을 뽑으면 된다냥!", key="question_input")
 
 if question:
     # 질문이 바뀌었을 때 카드 초기화
