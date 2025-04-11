@@ -5,3 +5,5 @@ ai_text.py
 소소한 플젝.md
 .streamlit/secrets.toml
 .venv
+__pycache__/
+*.py[cod]
