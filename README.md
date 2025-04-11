@@ -1,5 +1,9 @@
 # 🔮 냥타로 (NyangTarot)
 
+<p>
+  <img src="https://github.com/user-attachments/assets/fd18aca6-dc45-4c88-a988-4dff8c73d912" width="400"/>
+</p>
+
 고양이 점술가가 타로카드를 해석해주는 귀염뽀짝 Streamlit 앱!
 
 ---
