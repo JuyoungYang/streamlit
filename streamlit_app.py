@@ -10,9 +10,12 @@ try:
     with open("images/cat_tarot.jpg", "rb") as file:
         image_bytes = file.read()
     st.image(image_bytes, use_container_width=True)
+except FileNotFoundError:
+    st.warning("이미지 파일이 없어냥! 그래도 해석은 해줄게냥~")
 except Exception as e:
     st.error("이미지를 불러올 수 없습니다.")
-    print(f"이미지 로드 에러: {e}")
+    st.text(f"이미지 로드 에러: {e}")
+
 
 st.title("🔮 냥타로")
 st.subheader("오백냥을 내면 뭐든지 알려주겠다냥!😼🐾")
