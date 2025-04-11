@@ -1,18 +1,11 @@
 import streamlit as st
 from openai import OpenAI
 
-# OpenAI 클라이언트 초기화 (예외 처리 포함)
-try:
-    client = OpenAI(api_key=st.secrets["openai"]["api_key"])
-except Exception as e:
-    st.error(f"OpenAI API 키 불러오기 실패: {e}")
-    client = None
+# OpenAI API 키 설정
+client = OpenAI(api_key=st.secrets["openai"]["api_key"])
 
 
 def generate_ai_interpretation(question, cards):
-    if not client:
-        return "해석할 수 없다냥. OpenAI API 설정이 잘못된 것 같다냥!"
-
     cards_info = "\n".join(
         [
             f"- {card['name']} ({card['direction']}): {card['interpretation']}"
