@@ -3,3 +3,5 @@
 ai_image.py
 ai_text.py
 소소한 플젝.md
+.streamlit/secrets.toml
+.venv
