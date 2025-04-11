@@ -1,6 +1,6 @@
 import streamlit as st
-from tarot_cards import get_all_cards, get_random_card_info
 from interpretation import generate_ai_interpretation
+from tarot_cards import get_all_cards
 from card_display import display_card_grid
 
 st.set_page_config(page_title="냥타로", page_icon="🔮")
