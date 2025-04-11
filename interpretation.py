@@ -1,11 +1,10 @@
 import streamlit as st
 from openai import OpenAI
 
-# OpenAI API 키 설정
-client = OpenAI(api_key=st.secrets["openai"]["api_key"])
-
 
 def generate_ai_interpretation(question, cards):
+    client = OpenAI(api_key=st.secrets["openai"]["api_key"])
+
     cards_info = "\n".join(
         [
             f"- {card['name']} ({card['direction']}): {card['interpretation']}"
